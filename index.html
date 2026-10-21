@@ -131,9 +131,15 @@
     text-align: center;
   }
   .island { width: 34%; height: 4.6%; margin: 4.5% auto 0; border-radius: 999px; background: #000; }
+  /* The line above the clock: iOS's own short date, then DateSmith's widget (inside the dashed outline). DateSmith's
+     leading "|" only exists to balance that date, so the mockup always shows the date in front of it. */
+  .inline-line {
+    display: flex; justify-content: center; align-items: center; gap: 0.55em; margin: 13% 6% 0;
+    font-size: clamp(11px, 3.7vw, 15px); font-weight: 600; letter-spacing: 0.01em; white-space: pre; opacity: 0.92;
+  }
+  .sysdate { flex: none; }
   .inline-widget {
-    margin: 13% 6% 0; padding: 2px 6px; font-size: clamp(11px, 3.7vw, 15px); font-weight: 600; letter-spacing: 0.01em;
-    white-space: pre; overflow: hidden; text-overflow: ellipsis; opacity: 0.92;
+    min-width: 0; padding: 2px 6px; overflow: hidden; text-overflow: ellipsis;
     outline: 1.5px dashed rgba(255, 255, 255, 0.55); outline-offset: 4px; border-radius: 10px;
   }
   .clock { font-size: clamp(64px, 22vw, 84px); font-weight: 700; line-height: 1; letter-spacing: -0.02em; margin-top: 4%; }
@@ -201,7 +207,7 @@
         <div class="phone" role="img" aria-label="An iPhone Lock Screen with a DateSmith date in the line above the clock">
           <div class="screen">
             <div class="island"></div>
-            <div class="inline-widget" id="demo-date">|  October  |  10 / 08</div>
+            <div class="inline-line"><span class="sysdate" id="demo-sysdate">Thu 8</span><span class="inline-widget" id="demo-date">|  October  |  10 / 08</span></div>
             <div class="clock">9:41</div>
           </div>
         </div>
@@ -303,7 +309,7 @@
       <ul>
         <li><span class="tag">Preview Ended</span> means your free preview is over. Tap the widget to see the plans, and subscribe to bring back your date or countdown.</li>
         <li><span class="tag">Subscription Ended</span> means your subscription is no longer active. Tap the widget to subscribe again, or open DateSmith and tap Restore Purchases if you think it should still be active.</li>
-        <li><span class="tag">Open DateSmith</span> appears in front of your date when DateSmith needs to be opened, for example after you first install it, or when it cannot confirm your subscription. Your date still shows.</li>
+        <li><span class="tag">Open DateSmith</span> appears in front of your date when DateSmith needs to be opened, for example if you added the widget but have not opened DateSmith for a week, or when it cannot confirm your subscription. Your date still shows.</li>
       </ul>
     </details>
     <details>
@@ -392,6 +398,8 @@
       var mm = ("0" + (now.getMonth() + 1)).slice(-2);
       var dd = ("0" + now.getDate()).slice(-2);
       demo.textContent = "|  " + month + "  |  " + mm + " / " + dd;
+      var sys = document.getElementById("demo-sysdate");
+      if (sys) { sys.textContent = new Intl.DateTimeFormat("en-US", { weekday: "short" }).format(now) + " " + now.getDate(); }
     } catch (e) { /* keep the built in example */ }
   }
 
